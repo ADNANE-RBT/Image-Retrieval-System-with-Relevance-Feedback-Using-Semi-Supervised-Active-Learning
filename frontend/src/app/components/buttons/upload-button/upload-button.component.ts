@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ImageUploadService } from '../../../services/image-upload.service';
+
 
 @Component({
   selector: 'app-upload-button',
@@ -8,6 +10,8 @@ import { CommonModule } from '@angular/common';
   styles:''
 })
 export class UploadbuttonComponent {
+  constructor(private imageUploadService: ImageUploadService) {}
+
   previewUrl: string | null = null;
   fileName: string | null = null;
   
@@ -25,7 +29,7 @@ export class UploadbuttonComponent {
       this.fileName = file.name;
       const reader = new FileReader();
       reader.onload = () => {
-        this.previewUrl = reader.result as string;
+        this.imageUploadService.setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
