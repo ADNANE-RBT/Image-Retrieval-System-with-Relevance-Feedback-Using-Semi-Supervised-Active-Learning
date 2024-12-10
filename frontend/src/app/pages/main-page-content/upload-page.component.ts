@@ -6,13 +6,13 @@ import { ImageUploadService } from '../../services/image-upload.service';
 import { MiniSidebarComponent } from '../../components/mini-sidebar/mini-sidebar.component';
 
 @Component({
-  selector: 'app-main-page-content',
+  selector: 'app-upload-page',
   imports: [CommonModule, UploadbuttonComponent, MiniSidebarComponent],
   standalone: true,
-  templateUrl: './main-page-content.component.html',
+  templateUrl: './upload-page.component.html',
   styles: ``
 })
-export class MainPageContentComponent {
+export class UploadpageComponent {
   uploadedImageUrl: string | null = null;
 
   constructor(private imageUploadService: ImageUploadService) {
