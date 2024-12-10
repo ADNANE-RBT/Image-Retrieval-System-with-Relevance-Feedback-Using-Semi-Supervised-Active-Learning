@@ -4,6 +4,23 @@
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThsapwuIZ2JPUVRaWSoX_xoEIOHWxneY7EupS8gsFriA&s" />
     </div>
     <nav class="flex flex-1 flex-col gap-y-4 pt-10">
+      <a href="#" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 group-hover:text-blue-600 text-blue-500" 
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M 12 2.0996094 L 1 12 L 4 12 L 4 21 L 11 21 L 11 15 L 13 15 L 13 21 L 20 21 L 20 12 L 23 12 L 12 2.0996094 z M 12 4.7910156 L 18 10.191406 L 18 11 L 18 19 L 15 19 L 15 13 L 9 13 L 9 19 L 6 19 L 6 10.191406 L 12 4.7910156 z"></path>
+          </svg>
+
+        <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
+          <div class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg">
+            <div class="absolute inset-0 -left-1 flex items-center">
+              <div class="h-2 w-2 rotate-45 bg-white"></div>
+            </div>
+            Edit Image <span class="text-gray-400">(E)</span>
+          </div>
+        </div>
+      </a>
       <app-upload-button [version]="1"></app-upload-button>
       <a href="#" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
         <svg width="24" height="24" class="h-6 w-6 stroke-current group-hover:text-blue-600" 
@@ -30,6 +47,20 @@
               <div class="h-2 w-2 rotate-45 bg-white"></div>
             </div>
             Edit Image <span class="text-gray-400">(E)</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50" class="h-6 w-6 stroke-current group-hover:text-blue-600">
+          <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path>
+          </svg>
+
+        <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
+          <div class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg">
+            <div class="absolute inset-0 -left-1 flex items-center">
+              <div class="h-2 w-2 rotate-45 bg-white"></div>
+            </div>
+            Search Image <span class="text-gray-400">(E)</span>
           </div>
         </div>
       </a>
