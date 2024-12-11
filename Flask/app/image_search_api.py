@@ -1,8 +1,9 @@
 import os
 import json
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+from flask_cors import CORS  # Add CORS support
 
 # Import descriptor calculation function
 from Descriptors_calcul import calculate_descriptors
@@ -13,6 +14,7 @@ from contineous_SS_RF import SemiSupervisedImageSearch
 
 # Create Flask app
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -47,161 +49,54 @@ def convert_numpy_to_list(descriptors):
             converted_descriptors[category][feature_name] = feature_value.tolist() if hasattr(feature_value, 'tolist') else feature_value
     return converted_descriptors
 
-# Descriptor Calculation Endpoints
-@app.route('/calculate_descriptors', methods=['POST']) # tested
-def calculate_image_descriptors():
-    """
-    Endpoint for calculating image descriptors.
-    Supports single image upload and optional descriptor type filtering.
-    """
-    if 'image' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    
-    file = request.files['image']
-    
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        
-        try:
-            # Get optional descriptor type filter
-            descriptor_types = request.form.get('descriptor_types', 'all')
-            
-            # Calculate descriptors
-            full_descriptors = calculate_descriptors(filepath)
-            
-            # Remove temporary file
-            os.remove(filepath)
-            
-            # Filter descriptors if requested
-            if descriptor_types != 'all':
-                requested_types = descriptor_types.split(',')
-                filtered_descriptors = {
-                    dtype: full_descriptors.get(dtype, {}) 
-                    for dtype in requested_types 
-                    if dtype in full_descriptors
-                }
-                converted_descriptors = convert_numpy_to_list(filtered_descriptors)
-            else:
-                converted_descriptors = convert_numpy_to_list(full_descriptors)
-            
-            return jsonify({
-                "descriptors": converted_descriptors,
-                "image_filename": filename
-            })
-        
-        except Exception as e:
-            # Ensure file is removed even if an error occurs
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            return jsonify({"error": str(e)}), 500
-    
-    return jsonify({"error": "File type not allowed"}), 400
 
-@app.route('/descriptor_info', methods=['GET'])
-def get_descriptor_info():
-    """
-    Provide information about available descriptor types and their sub-features.
-    """
-    descriptor_info = {
-        "color": {
-            "histogram": "Color distribution across RGB channels",
-            "dominant_colors": "K-means clustered color centers and their percentages"
-        },
-        "texture": {
-            "gabor_filters": "Texture responses using Gabor filters",
-            "glcm_features": "Gray Level Co-occurrence Matrix texture features"
-        },
-        "shape": {
-            "hu_moments": "Invariant shape moments",
-            "shape_descriptors": "Aspect ratio, extent, and contour area"
-        }
-    }
-    
-    return jsonify(descriptor_info)
 
-@app.route('/bulk_descriptors', methods=['POST'])
-def calculate_bulk_descriptors():
-    """
-    Endpoint for calculating descriptors for multiple images.
-    Expects a list of image files.
-    """
-    if 'images' not in request.files:
-        return jsonify({"error": "No files uploaded"}), 400
-    
-    uploaded_files = request.files.getlist('images')
-    
-    if len(uploaded_files) == 0:
-        return jsonify({"error": "No files selected"}), 400
-    
-    bulk_descriptors = {}
+@app.route('/simple_search', methods=['POST'])
+def simple_image_search():
     try:
-        for file in uploaded_files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(filepath)
-                
-                try:
-                    descriptors = calculate_descriptors(filepath)
-                    bulk_descriptors[filename] = convert_numpy_to_list(descriptors)
-                except Exception as e:
-                    bulk_descriptors[filename] = {"error": str(e)}
-                
-                # Remove temporary file
-                os.remove(filepath)
+        if 'image' not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
         
-        return jsonify({"bulk_descriptors": bulk_descriptors})
-    
+        file = request.files['image']
+        
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            
+            try:
+                top_k = int(request.form.get('top_k', 10))
+                similar_images = simple_search.find_similar_images(filepath, top_k=top_k)
+                
+                # Optional: you might want to process paths to remove absolute path prefixes
+                processed_similar_images = [
+                    {
+                        "image_path": img_result['image_path'].replace(
+                            f"{DATASET_PATH}\\", ""
+                        ).replace("\\", "/"),
+                        "similarity_score": img_result['similarity_score']
+                    }
+                    for img_result in similar_images
+                ]
+                
+                os.remove(filepath)
+                return jsonify({
+                    "search_type": "simple_similarity",
+                    "similar_images": processed_similar_images
+                })
+            except Exception as e:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                return jsonify({"error": str(e)}), 500
+        
+        return jsonify({"error": "File type not allowed"}), 400
     except Exception as e:
-        # Cleanup any remaining files
-        for file in uploaded_files:
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
-            if os.path.exists(filepath):
-                os.remove(filepath)
-        
         return jsonify({"error": str(e)}), 500
 
-# Image Search Endpoints
-@app.route('/simple_search', methods=['POST']) #tested should be modify to edit the k_top
-def simple_image_search():
-    """
-    Endpoint for simple image similarity search.
-    """
-    if 'image' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    
-    file = request.files['image']
-    
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        
-        try:
-            # Allow customizable top_k parameter
-            top_k = int(request.form.get('top_k', 5))
-            similar_images = simple_search.find_similar_images(filepath, top_k=top_k)
-            os.remove(filepath)
-            return jsonify({
-                "search_type": "simple_similarity",
-                "similar_images": similar_images
-            })
-        except Exception as e:
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            return jsonify({"error": str(e)}), 500
-    
-    return jsonify({"error": "File type not allowed"}), 400
-
-@app.route('/semi_supervised_search', methods=['POST']) #tested 
+@app.route('/semi_supervised_search', methods=['POST'])
 def semi_supervised_image_search():
     if 'image' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
@@ -249,6 +144,20 @@ def semi_supervised_image_search():
             return jsonify({"error": str(e)}), 500
     
     return jsonify({"error": "File type not allowed"}), 400
+@app.route('/image/<path:filename>', methods=['GET'])
+def get_image(filename):
+    """
+    Serve an image from the dataset.
+    """
+    try:
+        # Ensure the requested file exists in the dataset directory
+        filepath = os.path.join(DATASET_PATH, filename)
+        if os.path.exists(filepath):
+            return send_from_directory(os.path.dirname(filepath), os.path.basename(filepath))
+        else:
+            return jsonify({"error": "Image not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Health Check Endpoint
 @app.route('/health', methods=['GET'])

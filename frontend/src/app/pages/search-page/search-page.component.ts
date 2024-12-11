@@ -1,11 +1,166 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
+interface SemiSupervisedSearchResult {
+  similar_images: string[];
+  search_type?: string;
+  feedback_applied?: boolean;
+}
+interface SimilarImage {
+  image_path: string;
+  similarity_score: number;
+}
+
+interface SimpleSearchResult {
+  search_type: string;
+  similar_images: SimilarImage[];
+}
+
 
 @Component({
   selector: 'app-search-page',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './search-page.component.html',
-  styles: ``
+  styles: [`
+    .feedback-section button {
+      display: block;
+      margin: 5px 0;
+    }
+    .image-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .image-item {
+      position: relative;
+      cursor: pointer;
+    }
+    .image-item.relevant {
+      border: 2px solid green;
+    }
+    .image-item.non-relevant {
+      border: 2px solid red;
+    }
+  `]
 })
 export class SearchPageComponent {
+  selectedFile: File | null = null;
+  similarImages: string[] = [];
+  searchMode: 'simple' | 'semi-supervised' | null = null;
+  relevantImages: string[] = [];
+  nonRelevantImages: string[] = [];
 
+  constructor(private http: HttpClient) {}
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.similarImages = [];
+      this.searchMode = null;
+      this.relevantImages = [];
+      this.nonRelevantImages = [];
+    }
+  }
+
+
+  performSimpleSearch() {
+    if (!this.selectedFile) return;
+  
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+    formData.append('top_k', '10');
+  
+    this.http.post<SimpleSearchResult>('http://localhost:5000/simple_search', formData)
+      .subscribe({
+        next: (response) => {
+          console.log('API Response:', response); // Debugging purposes
+          if (response.similar_images && Array.isArray(response.similar_images)) {
+            // Extract only image paths
+            this.similarImages = response.similar_images.map(item => item.image_path);
+            this.searchMode = 'simple';
+          } else {
+            console.error('Unexpected response structure', response);
+          }
+        },
+        error: (error) => {
+          console.error('Simple search failed', error);
+          alert('Image search failed');
+        }
+      });
+  }
+  
+  
+
+  performSemiSupervisedSearch() {
+    if (!this.selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
+      .subscribe({
+        next: (response) => {
+          this.similarImages = response.similar_images.map(str => str.replace(/\\/g, "/").replace("../../Dataset/RSSCN7-master/",""));
+          this.searchMode = 'semi-supervised';
+        },
+        error: (error) => {
+          console.error('Semi-supervised search failed', error);
+          alert('Semi-supervised image search failed');
+        }
+      });
+  }
+
+  toggleRelevance(image: string) {
+    const relevantIndex = this.relevantImages.indexOf(image);
+    const nonRelevantIndex = this.nonRelevantImages.indexOf(image);
+
+    if (relevantIndex > -1) {
+      this.relevantImages.splice(relevantIndex, 1);
+      this.nonRelevantImages.push(image);
+    } else if (nonRelevantIndex > -1) {
+      this.nonRelevantImages.splice(nonRelevantIndex, 1);
+    } else {
+      this.relevantImages.push(image);
+    }
+  }
+
+  refineSearch() {
+    if (!this.selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    const feedback = {
+      relevant: this.relevantImages,
+      non_relevant: this.nonRelevantImages
+    };
+    formData.append('feedback', JSON.stringify(feedback));
+
+    this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
+      .subscribe({
+        next: (response) => {
+          this.similarImages = response.similar_images;
+          this.relevantImages = [];
+          this.nonRelevantImages = [];
+        },
+        error: (error) => {
+          console.error('Refinement failed', error);
+          alert('Search refinement failed');
+        }
+      });
+  }
+  
+
+
+  isRelevant(image: string): boolean {
+    return this.relevantImages.includes(image);
+  }
+
+  isNonRelevant(image: string): boolean {
+    return this.nonRelevantImages.includes(image);
+  }
 }
