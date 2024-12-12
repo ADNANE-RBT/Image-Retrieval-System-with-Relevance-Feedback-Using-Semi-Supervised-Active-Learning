@@ -130,25 +130,38 @@ export class SearchPageComponent {
 
   refineSearch() {
     if (!this.selectedFile) return;
-
+  
     const formData = new FormData();
     formData.append('image', this.selectedFile);
-
+  
+    // Modify image paths to include full dataset path and convert forward slashes to backslashes
     const feedback = {
-      relevant: this.relevantImages,
-      non_relevant: this.nonRelevantImages
+      relevant: this.relevantImages.map(img => `../../Dataset/RSSCN7-master\\${img.replace(/\//g, '\\')}`),
+      non_relevant: this.nonRelevantImages.map(img => `../../Dataset/RSSCN7-master\\${img.replace(/\//g, '\\')}`)
     };
+  
+    console.log('Sending feedback:', feedback);
+    console.log('Feedback as JSON string:', JSON.stringify(feedback));
+  
     formData.append('feedback', JSON.stringify(feedback));
-
+  
     this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
       .subscribe({
         next: (response) => {
-          this.similarImages = response.similar_images;
-          this.relevantImages = [];
-          this.nonRelevantImages = [];
+          console.log('Refinement response:', response);
+          if (response.similar_images) {
+            this.similarImages = response.similar_images.map(str => 
+              str.replace(/\\/g, "/").replace("../../Dataset/RSSCN7-master/","")
+            );
+            this.relevantImages = [];
+            this.nonRelevantImages = [];
+          } else {
+            console.error('No similar images in response');
+          }
         },
         error: (error) => {
           console.error('Refinement failed', error);
+          console.error('Error details:', error.error);
           alert('Search refinement failed');
         }
       });
