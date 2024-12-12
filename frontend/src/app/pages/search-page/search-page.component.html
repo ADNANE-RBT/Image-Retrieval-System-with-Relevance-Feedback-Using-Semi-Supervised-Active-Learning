@@ -1,14 +1,24 @@
 <div class="container mx-auto p-8 bg-gradient-to-b from-gray-100 to-gray-200 rounded-xl shadow-lg">
   <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Image Search</h2>
 
-  <div class="flex justify-center mb-8">
-    <input 
-      type="file" 
-      (change)="onFileSelected($event)" 
-      accept=".png,.jpg,.jpeg,.bmp,.gif" 
-      class="block w-full max-w-lg px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 placeholder-gray-400"
-      placeholder="Choose an image file"
-    >
+  <div class="flex flex-col items-center mb-8 space-y-4">
+    <label class="relative inline-flex items-center px-6 py-3 bg-blue-500 text-white font-medium text-lg rounded-lg shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-300 cursor-pointer">
+      <input 
+        type="file" 
+        class="hidden" 
+        (change)="onFileSelected($event)" 
+        accept=".png,.jpg,.jpeg,.bmp,.gif"
+      >
+      <span class="mr-3">Upload Image</span>
+      <svg class="spinner hidden w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+    </label>
+    <div *ngIf="uploadedImage" class="mt-4 text-center">
+      <img [src]="uploadedImage" alt="Uploaded" class="w-32 h-32 object-cover rounded-md shadow-md mx-auto mb-2">
+      <p class="text-sm text-gray-700 font-medium">Label: {{ uploadedLabel }}</p>
+    </div>
   </div>
 
   <div class="flex justify-center gap-6 mb-10">
@@ -59,3 +69,24 @@
     </button>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const spinner = document.querySelector('.spinner');
+    const fileInput = document.querySelector('input[type="file"]');
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const uploadedImage = e.target.result;
+          document.querySelector('[src]').src = uploadedImage;
+          document.querySelector('.spinner').classList.add('hidden');
+        };
+        document.querySelector('.spinner').classList.remove('hidden');
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+</script>

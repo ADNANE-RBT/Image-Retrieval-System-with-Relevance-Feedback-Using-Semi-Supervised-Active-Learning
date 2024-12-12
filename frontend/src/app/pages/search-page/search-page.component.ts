@@ -55,17 +55,29 @@ export class SearchPageComponent {
 
   constructor(private http: HttpClient) {}
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
+
+  uploadedImage: string | null = null; // To store the image data URL
+  uploadedLabel: string | null = null; // To store the label for the uploaded image
+
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      
+      const file = fileInput.files[0];
+
+      this.uploadedLabel = file.name; // Set the label to the file name
       this.selectedFile = file;
       this.similarImages = [];
       this.searchMode = null;
       this.relevantImages = [];
       this.nonRelevantImages = [];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.uploadedImage = e.target?.result as string; // Set the image data URL
+      };
+      reader.readAsDataURL(file);
     }
   }
-
 
   performSimpleSearch() {
     if (!this.selectedFile) return;
