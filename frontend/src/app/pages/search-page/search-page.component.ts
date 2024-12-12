@@ -52,7 +52,7 @@ export class SearchPageComponent {
   searchMode: 'simple' | 'semi-supervised' | null = null;
   relevantImages: string[] = [];
   nonRelevantImages: string[] = [];
-
+  isLoading: boolean = false;
   constructor(private http: HttpClient) {}
 
 
@@ -81,7 +81,7 @@ export class SearchPageComponent {
 
   performSimpleSearch() {
     if (!this.selectedFile) return;
-  
+    this.isLoading = true;
     const formData = new FormData();
     formData.append('image', this.selectedFile);
     formData.append('top_k', '10');
@@ -94,13 +94,16 @@ export class SearchPageComponent {
             // Extract only image paths
             this.similarImages = response.similar_images.map(item => item.image_path);
             this.searchMode = 'simple';
+            this.isLoading = false;
           } else {
             console.error('Unexpected response structure', response);
+            this.isLoading = false;
           }
         },
         error: (error) => {
           console.error('Simple search failed', error);
           alert('Image search failed');
+          this.isLoading = false;
         }
       });
   }
@@ -112,16 +115,18 @@ export class SearchPageComponent {
 
     const formData = new FormData();
     formData.append('image', this.selectedFile);
-
+    this.isLoading = true;
     this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
       .subscribe({
         next: (response) => {
           this.similarImages = response.similar_images.map(str => str.replace(/\\/g, "/").replace("../../Dataset/RSSCN7-master/",""));
           this.searchMode = 'semi-supervised';
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Semi-supervised search failed', error);
           alert('Semi-supervised image search failed');
+          this.isLoading = false;
         }
       });
   }
