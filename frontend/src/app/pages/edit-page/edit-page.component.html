@@ -1,1 +1,7 @@
 <p>edit-page works!</p>
+<app-image-editor (imageProcessed)="onImageProcessed($event)"></app-image-editor>
+    
+    <div *ngIf="processedImageUrl" class="processed-image-preview">
+      <h3>Processed Image:</h3>
+      <img [src]="processedImageUrl" alt="Processed Image">
+    </div>

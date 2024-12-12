@@ -1,0 +1,95 @@
+<p>image-editor-component works!</p>
+<div class="image-editor-container">
+  <!-- Image Preview and Editing Canvas -->
+  <div class="image-preview-wrapper">
+    <canvas #imageCanvas class="image-canvas"></canvas>
+  </div>
+
+  <!-- Editing Controls -->
+  <div class="editing-controls">
+    <!-- Rotation Controls -->
+    <div class="control-section rotation-controls">
+      <h3>Rotation</h3>
+      <input 
+        type="range" 
+        [min]="-180" 
+        [max]="180" 
+        step="1" 
+        [(ngModel)]="rotationAngle" 
+        (input)="applyRotation()"
+      >
+      <span>{{ rotationAngle }}°</span>
+    </div>
+
+    <!-- Crop Controls -->
+    <div class="control-section crop-controls">
+      <h3>Crop</h3>
+      <div class="crop-inputs">
+        <input 
+          type="number" 
+          placeholder="X" 
+          [(ngModel)]="cropX" 
+          (input)="applyCrop()"
+        >
+        <input 
+          type="number" 
+          placeholder="Y" 
+          [(ngModel)]="cropY" 
+          (input)="applyCrop()"
+        >
+        <input 
+          type="number" 
+          placeholder="Width" 
+          [(ngModel)]="cropWidth" 
+          (input)="applyCrop()"
+        >
+        <input 
+          type="number" 
+          placeholder="Height" 
+          [(ngModel)]="cropHeight" 
+          (input)="applyCrop()"
+        >
+      </div>
+      <button (click)="resetCrop()">Reset Crop</button>
+    </div>
+
+    <!-- Resize Controls -->
+    <div class="control-section resize-controls">
+      <h3>Resize</h3>
+      <div class="resize-inputs">
+        <input 
+          type="number" 
+          placeholder="Width" 
+          [(ngModel)]="resizeWidth" 
+          (input)="applyResize()"
+        >
+        <input 
+          type="number" 
+          placeholder="Height" 
+          [(ngModel)]="resizeHeight" 
+          (input)="applyResize()"
+        >
+        <label>
+          <input 
+            type="checkbox" 
+            [(ngModel)]="maintainAspectRatio"
+          > 
+          Maintain Aspect Ratio
+        </label>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <input 
+        type="file" 
+        #fileInput 
+        accept="image/*" 
+        (change)="onFileSelected($event)"
+        style="display: none;"
+      >
+      <button (click)="fileInput.click()">Load Image</button>
+      <button (click)="saveImage()">Save Image</button>
+    </div>
+  </div>
+</div>
