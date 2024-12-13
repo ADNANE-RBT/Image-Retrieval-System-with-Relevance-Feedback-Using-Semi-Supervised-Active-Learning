@@ -6,6 +6,7 @@ import { UploadpageComponent } from './pages/main-page-content/upload-page.compo
 import { EditPageComponent } from './pages/edit-page/edit-page.component';
 import { SearchPageComponent } from './pages/search-page/search-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
+import { ImageViewComponent } from './pages/image-view/image-view.component';
 
 export const routes: Routes = [
   {
@@ -20,11 +21,14 @@ export const routes: Routes = [
     component: MainPageComponent,
     children: [
       { path: '', component: HomePageComponent },
+      { path: 'image', component: ImageViewComponent },
+      // { path: 'image/:id', component: ImageViewComponent }
+
     ],
   },
   {
     path: 'upload',
-    component: MainPageComponent,
+    component: MainPageComponent, 
     children: [
       { path: '', component: UploadpageComponent },
     ],
