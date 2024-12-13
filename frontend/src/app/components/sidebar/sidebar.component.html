@@ -4,13 +4,18 @@
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThsapwuIZ2JPUVRaWSoX_xoEIOHWxneY7EupS8gsFriA&s" />
     </div>
     <nav class="flex flex-1 flex-col gap-y-4 pt-10">
-      <a routerLink="/home" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="h-6 w-6 group-hover:text-blue-600 text-blue-500" 
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M 12 2.0996094 L 1 12 L 4 12 L 4 21 L 11 21 L 11 15 L 13 15 L 13 21 L 20 21 L 20 12 L 23 12 L 12 2.0996094 z M 12 4.7910156 L 18 10.191406 L 18 11 L 18 19 L 15 19 L 15 13 L 9 13 L 9 19 L 6 19 L 6 10.191406 L 12 4.7910156 z"></path>
-          </svg>
+      <a routerLink="/home" class=" group relative rounded-xl p-2 hover:bg-gray-50" routerLinkActive="bg-gray-100 text-blue-600">
+        <svg xmlns="http://www.w3.org/2000/svg" 
+        class="h-6 w-6 stroke-current"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+         stroke-width="2" >
+          <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        
 
         <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
           <div class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg">
@@ -21,25 +26,60 @@
           </div>
         </div>
       </a>
-      <app-upload-button [version]="1"></app-upload-button>
-      <a routerLink="/edit" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
-        <svg width="24" height="24" class="h-6 w-6 stroke-current group-hover:text-blue-600" 
-          xmlns="http://www.w3.org/2000/svg"
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
+      <!-- <app-upload-button [version]="1"></app-upload-button> -->
+      <a
+      class="group relative rounded-xl bg-gray-100 p-2 text-blue-600 "
+      routerLink="/upload"
+      routerLinkActive="bg-gray-100 text-blue-600"
+      aria-haspopup="dialog"
+    >
+      <svg
+        class="h-6 w-6 stroke-current"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V6C20 4.89543 19.1046 4 18 4Z"
+          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide lucide-pencil"
+        />
+        <path
+          d="M12 9V15M9 12H15H9Z"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+
+      <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
+        <div
+          class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg"
         >
-          <path
-            d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-          ></path>
-          <path d="m15 5 4 4"></path>
+          <div class="absolute inset-0 -left-1 flex items-center">
+            <div class="h-2 w-2 rotate-45 bg-white"></div>
+          </div>
+          Upload <span class="text-gray-400">(U)</span>
+        </div>
+      </div>
+    </a>
+      <a routerLink="/edit" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50"  routerLinkActive="bg-gray-100 text-blue-600">
+        <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        class="h-6 w-6 stroke-current"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        stroke-width="2"
+        stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
         </svg>
+        
 
         <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
           <div class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg">
@@ -50,11 +90,19 @@
           </div>
         </div>
       </a>
-      <a routerLink="/search" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50">
-        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50" class="h-6 w-6 stroke-current group-hover:text-blue-600">
-          <path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z"></path>
-          </svg>
-
+      <a routerLink="/search" class="text-gary-400 group relative rounded-xl p-2 hover:bg-gray-50"  routerLinkActive="bg-gray-100 text-blue-600">
+        <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        class="h-6 w-6 stroke-current"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+         stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        
         <div class="absolute inset-y-0 left-12 hidden items-center group-hover:flex">
           <div class="relative whitespace-nowrap rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 drop-shadow-lg">
             <div class="absolute inset-0 -left-1 flex items-center">
