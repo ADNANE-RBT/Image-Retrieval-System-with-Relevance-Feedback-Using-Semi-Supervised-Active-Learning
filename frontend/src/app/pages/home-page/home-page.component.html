@@ -1,66 +1,12 @@
   <section class="text-gray-600 body-font pt-3">
     <!-- category choice: -->
      <div class="container px-5 w-full mx-auto ">
-<div
-  class="w-[300px] px-4 py-5 bg-white flex flex-col gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]"
->
-  <legend class="text-xl font-semibold mb-3 select-none">Select category</legend>
-  <label
-    for="html"
-    name="status"
-    class="font-medium h-14 relative hover:bg-zinc-100 flex items-center px-3 gap-3 rounded-lg has-[:checked]:text-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:ring-blue-300 has-[:checked]:ring-1 select-none"
-  >
-  
-    Group 1
-    <input
-      checked=""
-      type="radio"
-      name="status"
-      class="peer/html w-4 h-4 absolute accent-current right-3"
-      id="html"
-    />
-  </label>
- 
-</div>
+
 <div
   class="my-4 px-4 py-5 bg-white gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)] flex flex-nowrap items-center"
 >
   <legend class="text-xl font-semibold  select-none">Choose category :</legend>
-<div class="flex gap-6">
-    <div class="flex items-center gap-2" *ngFor="let group of checkboxGroups">
-       <label 
-      
-        [for]="group.id" 
-        class="relative flex cursor-pointer items-center rounded-full p-3"
-        >
-        <input 
-        type="checkbox" 
-        [id]="group.id" 
-        class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10"
-        />
-        <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-3.5 w-3.5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              stroke="currentColor"
-              stroke-width="1"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-          </div>
-        
-        <!-- {{ group.label }}  -->
-      </label>
-      {{ group.label }}
-    </div>
-  </div>
- 
+  <app-group-check-box></app-group-check-box> 
 </div>
 
   

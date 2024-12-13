@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ImageCardComponent } from '../../components/image-card-component/image-card-component.component';
 import { CommonModule } from '@angular/common';
+import { GroupCheckBoxComponent } from '../../components/group-check-box/group-check-box.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [ImageCardComponent, CommonModule],
+  imports: [ImageCardComponent, CommonModule, GroupCheckBoxComponent],
   templateUrl: './home-page.component.html',
   styles: ``
 })
