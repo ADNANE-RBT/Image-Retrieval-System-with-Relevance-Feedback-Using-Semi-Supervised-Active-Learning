@@ -33,15 +33,12 @@ router.post('/upload', upload.single('image'), async (req, res) => {
             return res.status(400).json({ message: 'Category is required.' });
         }
 
-        // Create the category folder in the dataset directory
         const categoryFolder = path.join(__dirname, '..', '/../Dataset/RSSCN7-master', category);
         await fs.mkdir(categoryFolder, { recursive: true });
 
-        // Move the file to the category folder
         const finalFilePath = path.join(categoryFolder, filename);
         await fs.rename(tempFilePath, finalFilePath);
 
-        // Extract image dimensions using sharp
         const imageDimensions = await sharp(finalFilePath)
             .metadata()
             .then((metadata) => ({
@@ -84,7 +81,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get images by category (can handle multiple categories)
+// Get images by category
 router.get('/category', async (req, res) => {
     try {
         const { categories } = req.query;
@@ -111,9 +108,13 @@ router.get('/category', async (req, res) => {
 // Get a single image by ID
 router.get('/:id', async (req, res) => {
     try {
-        const image = await Image.findById(req.params.id);
+        console.log('GET /:id called with id:', req.params.id); 
         
+        const image = await Image.findById(req.params.id);
+        console.log('Image found in database:', image); 
+
         if (!image) {
+            console.log('Image not found for id:', req.params.id); 
             return res.status(404).json({ message: 'Image not found' });
         }
 
@@ -122,11 +123,14 @@ router.get('/:id', async (req, res) => {
             path: `${BASE_URL}/${image.path.replace(/\\/g, '/')}`,
         };
 
+        console.log('Updated image object to return:', updatedImage); 
         res.json(updatedImage);
     } catch (error) {
+        console.error('Error fetching image:', error); 
         res.status(500).json({ message: 'Error fetching image', error: error.message });
     }
 });
+
 
 // Delete an image
 router.delete('/:id', async (req, res) => {
@@ -181,7 +185,6 @@ router.patch('/:id', async (req, res) => {
 });
 
 
-// Search images by filename (partial match)
 router.get('/search', async (req, res) => {
     try {
         const { query } = req.query;

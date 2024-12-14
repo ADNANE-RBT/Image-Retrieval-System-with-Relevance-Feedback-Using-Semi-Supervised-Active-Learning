@@ -23,7 +23,6 @@ export interface Image {
   providedIn: 'root'
 })
 export class ImageService {
-  // Base API URL - adjust as needed for your backend configuration
   private apiUrl = 'http://localhost:5000/api/images';
 
   constructor(private http: HttpClient) {}
@@ -42,7 +41,7 @@ export class ImageService {
     return this.http.get<Image[]>(this.apiUrl);
   }
 
-  // Fetch images by category (can handle single or multiple categories)
+  // Fetch images by category 
   getImagesByCategory(categories: string | string[]): Observable<Image[]> {
     // Convert single category to array if needed
     const categoryParam = Array.isArray(categories) 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImageService, Image } from '../../services/image.service'; // Adjust import path as needed
+import { RouterModule } from '@angular/router';
 
 interface CheckboxGroup {
   id: string;
@@ -12,7 +13,7 @@ interface CheckboxGroup {
   selector: 'app-home-page',
   standalone: true,
   imports: [
-    CommonModule,
+    CommonModule, RouterModule
   ],
   templateUrl: './home-page.component.html',
 })

@@ -21,8 +21,8 @@ export const routes: Routes = [
     component: MainPageComponent,
     children: [
       { path: '', component: HomePageComponent },
-      { path: 'image', component: ImageViewComponent },
-      // { path: 'image/:id', component: ImageViewComponent }
+      // { path: 'image', component: ImageViewComponent },
+      { path: 'image/:id', component: ImageViewComponent }
 
     ],
   },
