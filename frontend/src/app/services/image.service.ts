@@ -24,7 +24,7 @@ export interface Image {
 })
 export class ImageService {
   // Base API URL - adjust as needed for your backend configuration
-  private apiUrl = '/api/images';
+  private apiUrl = 'http://localhost:5000/api/images';
 
   constructor(private http: HttpClient) {}
 

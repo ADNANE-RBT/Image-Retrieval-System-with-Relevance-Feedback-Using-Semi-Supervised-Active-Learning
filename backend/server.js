@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 
 
 // Load environment variables
@@ -10,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const BASE_URL = `http://localhost:${PORT}`;
 
 
 // Middleware
@@ -18,6 +20,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // enable cors:
 app.use(cors());
+
+// Serve static files from the Dataset folder
+app.use('/Dataset', express.static(path.join(__dirname, '../Dataset')));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {

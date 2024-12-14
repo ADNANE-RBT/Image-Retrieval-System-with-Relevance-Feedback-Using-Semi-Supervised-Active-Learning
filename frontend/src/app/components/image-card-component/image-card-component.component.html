@@ -101,3 +101,115 @@
             </div> -->
         </div>
     </div>
+<!-- wokring code -->
+<div class="container px-5 pb-24 w-full mt-16">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="flex justify-center items-center">
+      <p class="text-xl text-gray-500">Loading images...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="errorMessage" class="flex justify-center items-center">
+      <p class="text-xl text-red-500">{{ errorMessage }}</p>
+    </div>
+
+    <!-- No images state -->
+    <div *ngIf="!isLoading && images.length === 0" class="flex justify-center items-center">
+      <p class="text-xl text-gray-500">No images found</p>
+    </div>
+
+    <!-- Images grid -->
+     <div  *ngIf="!isLoading && images.length > 0" class="w-full bg-red-200 ">
+      <div *ngFor="let image of images" 
+          (click)="onImageClick(image)">
+        <div  class="max-w-[720px] mx-auto">
+      <!-- Centering wrapper -->
+      <div 
+      
+      class="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-lg">
+          <div
+          
+              class="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
+              <img
+              [src]="image.path" 
+              [alt]="image.filename"
+                 />
+              <div
+                  class="absolute inset-0 w-full h-full to-bg-black-10 bg-gradient-to-tr from-transparent via-transparent to-black/60">
+              </div>
+              <button
+                  class="!absolute top-4 right-4 h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-red-500 transition-all hover:bg-red-500/10 active:bg-red-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button">
+                  <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                          class="w-6 h-6">
+                          <path
+                              d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z">
+                          </path>
+                      </svg>
+                  </span>
+              </button>
+          </div>
+          <div class="p-6">
+              <div class="flex items-center justify-between mb-3">
+                  <h5 class="block font-sans text-xl antialiased font-medium leading-snug tracking-normal text-blue-gray-900">
+                      Category :
+                  </h5>
+                  <p
+                      class="flex items-center gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
+                      {{ image.category }}
+                  </p>
+                  <p class="text-gray-900 title-font text-lg font-medium">
+                    {{ image.filename }}
+                  </p>
+                  <p class="mt-1 text-sm text-gray-600">
+                    {{ image.dimensions.width }}x{{ image.dimensions.height }}
+                  </p>
+              </div>
+              <div class="inline-flex flex-wrap items-center gap-3 mt-8 group">
+                  <span
+                      class="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+                    
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                        </svg>
+                        
+                    
+                  </span>
+                  <span
+                      class="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+                     
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        
+                  </span>
+                  <a
+                  routerLink="/home/image"
+                  class="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                 
+                      </a>
+                  <span
+                      class="cursor-pointer rounded-full border border-red-900/5 bg-red-900/5 p-3 text-red-900 transition-colors hover:border-red-900/10 hover:bg-red-900/10 hover:!opacity-100 group-hover:opacity-70">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                        
+                   
+                  </span>
+                
+              </div>
+          </div>
+   
+      </div>
+        </div> 
+      </div>
+  
+     </div>
+  
+  
+    </div>

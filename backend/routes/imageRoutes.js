@@ -6,6 +6,9 @@ const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
 
+const BASE_URL = `http://localhost:5000`;
+
+
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
@@ -71,7 +74,11 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const images = await Image.find();
-        res.json(images);
+        const updatedImages = images.map(image => ({
+            ...image.toObject(),
+            path: `${BASE_URL}/${image.path.replace(/\\/g, '/')}`,
+        }));
+        res.json(updatedImages);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching images', error: error.message });
     }
@@ -81,8 +88,7 @@ router.get('/', async (req, res) => {
 router.get('/category', async (req, res) => {
     try {
         const { categories } = req.query;
-        
-        // If categories is a string, convert to array, else use as is
+
         const categoryArray = typeof categories === 'string' 
             ? categories.split(',').map(cat => cat.trim()) 
             : categories;
@@ -91,7 +97,12 @@ router.get('/category', async (req, res) => {
             ? await Image.find({ category: { $in: categoryArray } })
             : await Image.find();
 
-        res.json(images);
+        const updatedImages = images.map(image => ({
+            ...image.toObject(),
+            path: `${BASE_URL}/${image.path.replace(/\\/g, '/')}`,
+        }));
+
+        res.json(updatedImages);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching images by category', error: error.message });
     }
@@ -105,8 +116,13 @@ router.get('/:id', async (req, res) => {
         if (!image) {
             return res.status(404).json({ message: 'Image not found' });
         }
-        
-        res.json(image);
+
+        const updatedImage = {
+            ...image.toObject(),
+            path: `${BASE_URL}/${image.path.replace(/\\/g, '/')}`,
+        };
+
+        res.json(updatedImage);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching image', error: error.message });
     }
@@ -164,7 +180,6 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
-// Additional suggested endpoints:
 
 // Search images by filename (partial match)
 router.get('/search', async (req, res) => {
