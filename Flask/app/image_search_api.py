@@ -1,7 +1,7 @@
 import os
 import json
 import numpy as np
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory,send_file
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # Add CORS support
 
@@ -11,7 +11,7 @@ from Descriptors_calcul import calculate_descriptors
 # Import search implementations
 from Simple_search_debug import ImageSimilaritySearch
 from contineous_SS_RF import SemiSupervisedImageSearch
-
+from descriptor_visualization import create_descriptor_visualization
 # Create Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -170,6 +170,93 @@ def health_check():
         "simple_search_initialized": bool(simple_search.image_descriptors),
         "semi_supervised_search_initialized": bool(semi_supervised_search.image_descriptors)
     }), 200
+# Load pre-computed descriptors
+# Load pre-computed descriptors
+def load_descriptors(json_path='image_descriptors.json'):
+    """
+    Load pre-computed image descriptors from a JSON file.
+    
+    Args:
+        json_path (str): Path to the JSON file containing descriptors
+    
+    Returns:
+        dict: Loaded image descriptors
+    """
+    try:
+        with open(json_path, 'r') as file:
+            descriptors = json.load(file)
+            
+        # Convert nested lists back to numpy arrays
+        for image_path, image_descriptors in descriptors.items():
+            for descriptor_type, descriptor_data in image_descriptors.items():
+                for sub_key, sub_value in descriptor_data.items():
+                    descriptors[image_path][descriptor_type][sub_key] = np.array(sub_value)
+        
+        return descriptors
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Descriptors file not found at {json_path}")
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON format in {json_path}")
 
+# Load descriptors when the application starts
+try:
+    IMAGE_DESCRIPTORS = load_descriptors()
+except Exception as e:
+    print(f"Error loading descriptors: {e}")
+    IMAGE_DESCRIPTORS = {}
+
+@app.route('/descriptors', methods=['POST'])
+def get_descriptors():
+    """
+    Endpoint to retrieve and visualize descriptors for a specific image.
+    Returns visualization of descriptors as PNG image.
+    """
+    try:
+        if request.is_json:
+            data = request.get_json()
+        elif request.data:
+            data = json.loads(request.data)
+        else:
+            data = request.form.to_dict() or request.args.to_dict()
+        
+        # Extract image path
+        image_path = data.get('image_path')
+        if not image_path:
+            return jsonify({"error": "No image path provided"}), 400
+        
+        # Remove leading slash and convert forward slashes to backslashes
+        image_path = image_path.lstrip('/').replace('/', '\\')
+        
+        # Construct full image path
+        full_image_path = os.path.join(DATASET_PATH, image_path)
+        
+        # Print for debugging
+        print(f"Looking for path: {full_image_path}")
+        
+        # Check if descriptors exist for the image
+        if full_image_path not in IMAGE_DESCRIPTORS:
+            return jsonify({
+                "error": "No descriptors found",
+                "requested_path": full_image_path
+            }), 404
+        
+        # Get descriptors and create visualization
+        descriptors = IMAGE_DESCRIPTORS[full_image_path]
+        
+        try:
+            visualization_buffer = create_descriptor_visualization(descriptors)
+            
+            # Return the visualization as an image
+            return send_file(
+                visualization_buffer,
+                mimetype='image/png',
+                download_name='descriptor_visualization.png'  # Added download name
+            )
+        except Exception as viz_error:
+            print(f"Visualization error: {viz_error}")
+            return jsonify({"error": f"Failed to create visualization: {str(viz_error)}"}), 500
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
