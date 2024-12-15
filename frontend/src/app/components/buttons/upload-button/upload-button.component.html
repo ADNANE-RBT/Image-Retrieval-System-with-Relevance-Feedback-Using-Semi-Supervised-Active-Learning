@@ -49,25 +49,7 @@
     </ng-container>
   
     <!-- Version 2 -->
-    <ng-container *ngSwitchCase="2">
-      <div class="inline-flex items-center gap-2 align-top">
-        <div class="relative inline-block">
-          <button
-            (click)="handleButtonClick()"
-            aria-haspopup="dialog"  class="font-medium h-10 relative hover:bg-zinc-100 flex items-center px-3 gap-3 rounded-lg text-blue-500 bg-blue-50 ring-blue-300 ring-1 "
 
-          >
-            {{ fileName ? 'Change image' : 'Upload ' }}
-          </button>
-          <input
-            #fileInput
-            type="file"
-            (change)="handleFileChange($event)"
-            class="hidden"
-            accept="image/*"
-            aria-label="Upload image file"
-          />
-        </div>
-      </div>
-    </ng-container>
+  
+
   </ng-container>

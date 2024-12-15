@@ -277,9 +277,7 @@ export class ImageEditorComponent implements OnInit {
         this.imageService.uploadImage(newImageFile, this.category).subscribe({
           next: (response) => {
             console.log('Image uploaded successfully:', response);
-            // alert('Image uploaded successfully!');
-            // const imageId = response.image._id; // Assuming your API returns an image object with _id
-            // this.router.navigate([`/home/image/${imageId}`]);
+       
             const imageId = response._id;
             this.router.navigate([`/home/image/${imageId}`]);
           },

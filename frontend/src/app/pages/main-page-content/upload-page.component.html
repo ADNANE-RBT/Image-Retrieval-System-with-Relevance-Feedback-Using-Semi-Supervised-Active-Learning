@@ -1,60 +1,103 @@
-<!-- <app-upload-button [version]="1"></app-upload-button>  -->
-
-<div class=" w-full px-4 py-2">
+<div class="w-full px-4 py-2">
   <div class="bg-gray-900 w-full h-[500px] rounded-lg col-span-11 mb-40">
-    <div class="flex p-2 gap-1 mb-3">
-      <div class="">
-        <span class="bg-red-500 inline-block center w-3 h-3 rounded-full"></span>
-      </div>
-      <div class="circle">
-        <span class="bg-yellow-500 inline-block center w-3 h-3 rounded-full"></span>
-      </div>
-      <div class="circle">
-        <span class="bg-green-500 box inline-block center w-3 h-3 rounded-full"></span>
-      </div>
-    </div>
-    <div class=" w-full h-96 p-4 ">
+    <div class="w-full h-96 p-4">
       <ng-container *ngIf="uploadedImageUrl; else noImage">
-          <img [src]="uploadedImageUrl" alt="Uploaded Image" class="rounded-lg w-full h-full object-cover" />
-        </ng-container>
+        <img
+          [src]="uploadedImageUrl"
+          alt="Uploaded Image"
+          class="rounded-lg w-full h-full object-cover"
+        />
+      </ng-container>
 
-      <ng-template
-      #noImage
-      >
-      <div
-      class="m-4 px-4 py-5 text-white  flex flex-col justify-center items-center gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]"
-      >
-      <legend class="text-xl font-semibold mb-3 select-none ">Upload Image </legend>
-      <app-upload-button [version]="2"></app-upload-button>
-  
-      </div>
-      
-      </ng-template>     
+      <ng-template #noImage>
+        <div
+          class="m-4 px-4 py-5 text-white flex flex-col justify-center items-center gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]"
+        >
+          <legend class="text-xl font-semibold mb-3 select-none">
+            Upload Image
+          </legend>
+          <div class="inline-flex items-center gap-2 align-top">
+            <button
+              aria-haspopup="dialog"
+              class="font-medium h-10 relative hover:bg-zinc-100 flex items-center px-3 gap-3 rounded-lg text-blue-500 bg-blue-50 ring-blue-300 ring-1"
+              (click)="fileInputRef.nativeElement.click()"
+            >
+              Upload
+            </button>
+            <input
+              #fileInput
+              type="file"
+              class="hidden"
+              accept="image/*"
+              (change)="onFileChange($event)"
+            />
+          </div>
+        </div>
+      </ng-template>
     </div>
-    <div class="container px-5 w-full mx-auto ">
+    <div class="container px-5 w-full mx-auto">
       <div
         class="my-4 px-4 py-5 bg-white gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)] items-center"
       >
-      <div class="flex flex-nowrap w-full items-center">
-        <legend class="text-xl font-semibold  select-none">Choose category :</legend>
-        <app-group-check-box></app-group-check-box>    
-      </div>
+        <div class="flex flex-nowrap w-full items-center">
+          <legend class="text-xl font-semibold select-none">
+            Choose category:
+          </legend>
+          <div class="flex gap-6">
+            <div class="flex items-center gap-2" *ngFor="let group of checkboxGroups">
+            <label 
+            
+                [for]="group.id" 
+                (change)="onCategoryChange($event, group.value)"
+                class="relative flex cursor-pointer items-center rounded-full p-3"
+                >
+                <input 
+                type="checkbox" 
+                [id]="group.id" 
+                [value]="group.value"
+                class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10"
+                />
+                <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                    >
+                    <path
+                        fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                    ></path>
+                    </svg>
+                </div>
+                
+                <!-- {{ group.label }}  -->
+            </label>
+            {{ group.label }}
+            </div>
+        </div>
+        </div>
 
         <div class="container px-5 w-full mx-auto flex justify-end gap-4 mt-5">
-          <button 
-          class="px-4 py-2 rounded-full text-sm font-medium border focus:outline-none focus:ring transition text-red-600 border-red-600 hover:text-white hover:bg-red-600 active:bg-red-700 focus:ring-red-300" type="submit">Cancel</button>
-
-            <button
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] rounded-full"
-            type="button">
+          <button
+            class="px-4 py-2 rounded-full text-sm font-medium border text-red-600 border-red-600 hover:text-white hover:bg-red-600"
+            type="button"
+            (click)="resetForm()"
+          >
+            Cancel
+          </button>
+          <button
+            class="py-3 px-6 bg-gradient-to-tr from-gray-900 to-gray-800 text-white shadow-md rounded-full"
+            type="button"
+            (click)="uploadImage()"
+          >
             Submit
           </button>
         </div>
       </div>
-    
     </div>
   </div>
 </div>
-
-
-
