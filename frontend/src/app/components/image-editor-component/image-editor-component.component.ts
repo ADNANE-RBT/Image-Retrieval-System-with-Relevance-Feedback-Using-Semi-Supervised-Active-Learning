@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { ImageService } from '../../services/image.service'; // Import your image service
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-image-editor',
   standalone: true,
@@ -67,23 +69,16 @@ export class ImageEditorComponent implements OnInit {
   resizeHeight = 0;
   maintainAspectRatio = true;
 
+  constructor(private imageService: ImageService, private sanitizer: DomSanitizer,     private route: ActivatedRoute,
+  ) {}
+
   ngOnInit() {
     const canvas = this.canvas.nativeElement;
     this.ctx = canvas.getContext('2d')!;
-  }
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          this.loadImage(img);
-        };
-        img.src = e.target?.result as string;
-      };
-      reader.readAsDataURL(input.files[0]);
+    const imageId = this.route.snapshot.paramMap.get('id');
+    console.log('Image ID:', imageId);
+    if (imageId) {
+      this.fetchImageFromUrl(imageId);
     }
   }
 
@@ -142,6 +137,24 @@ export class ImageEditorComponent implements OnInit {
     ctx.restore();
   }
 
+  fetchImageFromUrl(imageId: string) {
+    this.imageService.getImageById(imageId).subscribe({
+      next: (image) => {
+        console.log('Image data:', image);
+        const img = new Image();
+        img.onload = () => {
+          this.loadImage(img);
+        };
+        // img.src = this.sanitizer.bypassSecurityTrustUrl(image.path) as string;
+        img.src = image.path; 
+
+      },
+      error: (err) => {
+        console.error('Failed to load image', err);
+      }
+    });
+  }
+
   applyRotation() {
     this.drawImage();
   }
@@ -183,6 +196,21 @@ export class ImageEditorComponent implements OnInit {
     this.resizeHeight = this.cropHeight;
   }
 
+  
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          this.loadImage(img);
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
   resetCrop() {
     if (!this.originalImage) return;
 

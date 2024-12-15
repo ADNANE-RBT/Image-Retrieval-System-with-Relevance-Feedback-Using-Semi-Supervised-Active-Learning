@@ -7,6 +7,7 @@ import { EditPageComponent } from './pages/edit-page/edit-page.component';
 import { SearchPageComponent } from './pages/search-page/search-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { ImageViewComponent } from './pages/image-view/image-view.component';
+import { ImageEditorComponent } from './components/image-editor-component/image-editor-component.component';
 
 export const routes: Routes = [
   {
@@ -36,7 +37,9 @@ export const routes: Routes = [
     path: 'edit',
     component: MainPageComponent,
     children: [
-      { path: 'image/:id', component: EditPageComponent },
+      // { path: 'image/:id', component: ImageEditComponent },
+      { path: 'images/:id', component: ImageEditorComponent },
+      { path: '', component: EditPageComponent },
     ],
   },
   {
