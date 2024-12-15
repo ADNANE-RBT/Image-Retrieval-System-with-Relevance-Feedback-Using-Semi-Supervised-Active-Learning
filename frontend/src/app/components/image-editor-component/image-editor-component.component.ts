@@ -20,7 +20,6 @@ import { Router } from '@angular/router';
     .image-preview-wrapper {
       flex: 1;
       max-width: 70%;
-      border: 1px solid #ccc;
     }
     .image-canvas {
       max-width: 100%;

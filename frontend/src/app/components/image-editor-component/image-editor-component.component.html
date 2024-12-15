@@ -1,94 +1,138 @@
-<div class="image-editor-container">
-  <!-- Image Preview and Editing Canvas -->
-  <div class="image-preview-wrapper">
-    <canvas #imageCanvas class="image-canvas"></canvas>
-  </div>
-
-  <!-- Editing Controls -->
-  <div class="editing-controls">
-    <!-- Rotation Controls -->
-    <div class="control-section rotation-controls">
-      <h3>Rotation</h3>
-      <input 
-        type="range" 
-        [min]="-180" 
-        [max]="180" 
-        step="1" 
-        [(ngModel)]="rotationAngle" 
-        (input)="applyRotation()"
-      >
-      <span>{{ rotationAngle }}°</span>
+<div class="container mx-auto p-6 bg-gray-100 min-h-screen flex flex-col items-center">
+  <div class="image-editor-container w-full max-w-4xl bg-white shadow-lg rounded-lg p-6 flex flex-col md:flex-row">
+    <!-- Image Preview and Editing Canvas -->
+    <div class="image-preview-wrapper w-full ">
+      <canvas #imageCanvas class="image-canvas w-full h-full bg-gray-200 rounded-md border-2 border-gray-300"></canvas>
     </div>
 
-    <!-- Crop Controls -->
-    <div class="control-section crop-controls">
-      <h3>Crop</h3>
-      <div class="crop-inputs">
-        <input 
-          type="number" 
-          placeholder="X" 
-          [(ngModel)]="cropX" 
-          (input)="applyCrop()"
-        >
-        <input 
-          type="number" 
-          placeholder="Y" 
-          [(ngModel)]="cropY" 
-          (input)="applyCrop()"
-        >
-        <input 
-          type="number" 
-          placeholder="Width" 
-          [(ngModel)]="cropWidth" 
-          (input)="applyCrop()"
-        >
-        <input 
-          type="number" 
-          placeholder="Height" 
-          [(ngModel)]="cropHeight" 
-          (input)="applyCrop()"
-        >
-      </div>
-      <button (click)="resetCrop()">Reset Crop</button>
-    </div>
-
-    <!-- Resize Controls -->
-    <div class="control-section resize-controls">
-      <h3>Resize</h3>
-      <div class="resize-inputs">
-        <input 
-          type="number" 
-          placeholder="Width" 
-          [(ngModel)]="resizeWidth" 
-          (input)="applyResize()"
-        >
-        <input 
-          type="number" 
-          placeholder="Height" 
-          [(ngModel)]="resizeHeight" 
-          (input)="applyResize()"
-        >
-        <label>
+    <!-- Editing Controls -->
+    <div class="editing-controls w-full md:w-1/3 space-y-6">
+      <!-- Rotation Controls -->
+      <div class="control-section rotation-controls bg-gray-50 p-4 rounded-md">
+        <h3 class="text-lg font-semibold mb-4 text-gray-700">Rotation</h3>
+        <div class="flex flex-col items-center">
           <input 
-            type="checkbox" 
-            [(ngModel)]="maintainAspectRatio"
-          > 
-          Maintain Aspect Ratio
-        </label>
+            type="range" 
+            class="w-full h-2 bg-gray-300 rounded-full appearance-none cursor-pointer
+            [&::-webkit-slider-thumb]:appearance-none 
+            [&::-webkit-slider-thumb]:w-4 
+            [&::-webkit-slider-thumb]:h-4 
+            [&::-webkit-slider-thumb]:bg-indigo-500 
+            [&::-webkit-slider-thumb]:rounded-full
+            hover:bg-gray-400 
+            focus:outline-none 
+            focus:ring-2 
+            focus:ring-indigo-500"
+            [min]="-180" 
+            [max]="180" 
+            step="1" 
+            [(ngModel)]="rotationAngle" 
+            (input)="applyRotation()"
+          >
+          <span class="mt-2 text-gray-600">{{ rotationAngle }}°</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <input 
-        type="file" 
-        #fileInput 
-        accept="image/*" 
-        (change)="onFileSelected($event)"
-        style="display: none;"
-      >
-      <button (click)="fileInput.click()">Load Image</button>
-      <button (click)="saveImage()">Save Image</button>
+      <!-- Crop Controls -->
+      <div class="control-section crop-controls bg-gray-50 p-4 rounded-md">
+        <h3 class="text-lg font-semibold mb-4 text-gray-700">Crop</h3>
+        <div class="crop-inputs grid grid-cols-2 gap-2 mb-4">
+          <input 
+            type="number" 
+            placeholder="X" 
+            class="input-field"
+            [(ngModel)]="cropX" 
+            (input)="applyCrop()"
+          >
+          <input 
+            type="number" 
+            placeholder="Y" 
+            class="input-field"
+            [(ngModel)]="cropY" 
+            (input)="applyCrop()"
+          >
+          <input 
+            type="number" 
+            placeholder="Width" 
+            class="input-field"
+            [(ngModel)]="cropWidth" 
+            (input)="applyCrop()"
+          >
+          <input 
+            type="number" 
+            placeholder="Height" 
+            class="input-field"
+            [(ngModel)]="cropHeight" 
+            (input)="applyCrop()"
+          >
+        </div>
+        <button 
+          (click)="resetCrop()" 
+          class="w-full bg-red-200 text-gray-700 py-2 rounded-md hover:bg-red-300 transition-colors"
+        >
+          Reset Crop
+        </button>
+      </div>
+
+      <!-- Resize Controls -->
+      <div class="control-section resize-controls bg-gray-50 p-4 rounded-md">
+        <h3 class="text-lg font-semibold mb-4 text-gray-700">Resize</h3>
+        <div class="resize-inputs space-y-4">
+          <div class="grid grid-cols-2 gap-2">
+            <input 
+              type="number" 
+              placeholder="Width" 
+              class="input-field"
+              [(ngModel)]="resizeWidth" 
+              (input)="applyResize()"
+            >
+            <input 
+              type="number" 
+              placeholder="Height" 
+              class="input-field"
+              [(ngModel)]="resizeHeight" 
+              (input)="applyResize()"
+            >
+          </div>
+          <label class="flex items-center space-x-2 text-gray-600">
+            <input 
+              type="checkbox" 
+              class="form-checkbox text-indigo-600 rounded focus:ring-indigo-500"
+              [(ngModel)]="maintainAspectRatio"
+            > 
+            <span>Maintain Aspect Ratio</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons space-y-4">
+        <input 
+          type="file" 
+          #fileInput 
+          accept="image/*" 
+          (change)="onFileSelected($event)"
+          class="hidden"
+        >
+        <button 
+          (click)="fileInput.click()" 
+          class="w-full bg-indigo-400 text-white py-3 rounded-md hover:bg-indigo-500 transition-colors"
+        >
+          Load Image
+        </button>
+        <button 
+          (click)="saveImage()" 
+          class="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          Save Image
+        </button>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+.input-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-700;
+}
+</style>
