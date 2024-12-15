@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ImageService } from '../../services/image.service'; // Import your image service
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-image-editor',
   standalone: true,
@@ -58,6 +60,7 @@ export class ImageEditorComponent implements OnInit {
 
   private ctx!: CanvasRenderingContext2D;
   private originalImage: HTMLImageElement | null = null;
+  private category: string = '';
 
   // Editing state
   rotationAngle = 0;
@@ -69,7 +72,7 @@ export class ImageEditorComponent implements OnInit {
   resizeHeight = 0;
   maintainAspectRatio = true;
 
-  constructor(private imageService: ImageService, private sanitizer: DomSanitizer,     private route: ActivatedRoute,
+  constructor(private router: Router,private imageService: ImageService, private sanitizer: DomSanitizer,     private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -142,12 +145,14 @@ export class ImageEditorComponent implements OnInit {
       next: (image) => {
         console.log('Image data:', image);
         const img = new Image();
+        img.crossOrigin = 'anonymous'; // Allow cross-origin image loading
         img.onload = () => {
           this.loadImage(img);
         };
+ 
         // img.src = this.sanitizer.bypassSecurityTrustUrl(image.path) as string;
         img.src = image.path; 
-
+        this.category = image.category;
       },
       error: (err) => {
         console.error('Failed to load image', err);
@@ -255,13 +260,36 @@ export class ImageEditorComponent implements OnInit {
   }
 
   saveImage() {
-    if (!this.canvas) return;
+    if (!this.canvas || !this.category) {
+      console.error('Canvas or category is missing. Cannot save the image.');
+      return;
+    }
 
+    // Convert the canvas content to a Blob (image file)
     this.canvas.nativeElement.toBlob((blob) => {
       if (blob) {
-        this.imageProcessed.emit(blob);
+        // Create a new File object from the Blob
+        const newImageFile = new File([blob], 'edited-image.png', {
+          type: 'image/png',
+        });
+
+        // Call the upload service with the new file and stored category
+        this.imageService.uploadImage(newImageFile, this.category).subscribe({
+          next: (response) => {
+            console.log('Image uploaded successfully:', response);
+            // alert('Image uploaded successfully!');
+            // const imageId = response.image._id; // Assuming your API returns an image object with _id
+            // this.router.navigate([`/home/image/${imageId}`]);
+            const imageId = response._id;
+            this.router.navigate([`/home/image/${imageId}`]);
+          },
+          error: (err) => {
+            console.error('Failed to upload image:', err);
+            alert('Failed to upload the image.');
+          },
+        });
       }
-    });
+    }, 'image/png'); // Specify the format of the Blob as 'image/png'
   }
 }
 

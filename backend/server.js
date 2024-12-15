@@ -22,8 +22,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve static files from the Dataset folder
-app.use('/Dataset', express.static(path.join(__dirname, '../Dataset')));
-
+app.use('/Dataset', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); 
+    res.header('Access-Control-Allow-Methods', 'GET');
+    next();
+  }, express.static(path.join(__dirname, '../Dataset')));
+  
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,

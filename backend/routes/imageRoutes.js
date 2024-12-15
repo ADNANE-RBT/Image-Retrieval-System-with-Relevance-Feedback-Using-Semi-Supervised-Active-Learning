@@ -26,18 +26,25 @@ const upload = multer({ storage });
 // Upload an image
 router.post('/upload', upload.single('image'), async (req, res) => {
     try {
+        console.log('API called: /upload');
+
         const { filename, path: tempFilePath, size } = req.file;
         const { category } = req.body;
 
         if (!category) {
+            console.log('Error: Category is missing');
             return res.status(400).json({ message: 'Category is required.' });
         }
 
+        console.log(`File received: ${filename}, Temp path: ${tempFilePath}, Size: ${size}`);
+
         const categoryFolder = path.join(__dirname, '..', '/../Dataset/RSSCN7-master', category);
         await fs.mkdir(categoryFolder, { recursive: true });
+        console.log(`Category folder created or already exists: ${categoryFolder}`);
 
         const finalFilePath = path.join(categoryFolder, filename);
         await fs.rename(tempFilePath, finalFilePath);
+        console.log(`File moved to final path: ${finalFilePath}`);
 
         const imageDimensions = await sharp(finalFilePath)
             .metadata()
@@ -46,26 +53,45 @@ router.post('/upload', upload.single('image'), async (req, res) => {
                 height: metadata.height,
             }));
 
+        console.log(`Image dimensions: ${imageDimensions.width}x${imageDimensions.height}`);
+
         const dimensions = {
             width: imageDimensions.width || 0,
             height: imageDimensions.height || 0,
         };
 
-        // Create new image document
+        const relativeFilePath = path.join('Dataset', 'RSSCN7-master', category, filename);
+
         const image = new Image({
             filename,
-            path: finalFilePath,
+            path: relativeFilePath,  
             size,
             category,
             dimensions,
         });
         await image.save();
+        console.log('Image document saved successfully.');
 
-        res.status(201).json({ message: 'Image uploaded successfully', image });
+        res.status(201).json({
+            // message: 'Image uploaded successfully',
+            // image: {
+              _id: image._id,
+              filename: image.filename,
+              path: image.path,
+              size: image.size,
+              category: image.category,
+              dimensions: image.dimensions,
+              createdAt: image.createdAt,
+              updatedAt: image.updatedAt,
+            // },
+          });
     } catch (error) {
+        console.log('Error during image upload:', error.message);
         res.status(500).json({ message: 'Error uploading image', error: error.message });
     }
 });
+
+
 
 // Fetch all images
 router.get('/', async (req, res) => {

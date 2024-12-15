@@ -12,7 +12,6 @@ export class EditPageComponent {
   processedImageUrl: string | null = null;
 
   onImageProcessed(imageBlob: Blob) {
-    // Create a URL for the processed image to display
     this.processedImageUrl = URL.createObjectURL(imageBlob);
   }
 }
