@@ -1,40 +1,45 @@
- <div class="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl h-96">
-            <img
-             [src]="image?.path" 
-  
-            class="object-cover w-full h-full" />
-  </div>
-  <section class="text-gray-600 body-font">
-    <div class="container px-5 py-24 mx-auto">
-       
-      <div class="flex flex-col">
-        <div class="h-1 bg-gray-200 rounded overflow-hidden">
-          <div class="w-24 h-full bg-indigo-500"></div>
-        </div>
-        <div class="flex flex-wrap sm:flex-row flex-col py-6 mb-12">
-          <h1 class="sm:w-2/5 text-gray-900 font-medium title-font text-2xl mb-2 sm:mb-0">Check the visualisations now</h1>
-          <p class="sm:w-3/5 leading-relaxed text-base sm:pl-10 pl-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste nisi architecto commodi ab. Blanditiis repellat fuga accusantium inventore? Delectus sunt doloribus odit ipsam saepe impedit neque dolores nulla repudiandae quisquam.</p>
-        </div>
+<!-- image-view.component.html -->
+<div class="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl h-96" *ngIf="image">
+  <img [src]="image.path" class="object-cover w-full h-full" />
+</div>
+
+<section class="text-gray-600 body-font" *ngIf="image">
+  <div class="container px-5 py-24 mx-auto">
+    <div class="flex flex-col">
+      <div class="h-1 bg-gray-200 rounded overflow-hidden">
+        <div class="w-24 h-full bg-indigo-500"></div>
       </div>
-      <div class="container px-5 py-24 mx-auto">
-        <div class="flex flex-wrap -mx-4 -mb-10 text-center">
-          <div class="sm:w-1/2 mb-10 px-4">
-            <div class="rounded-lg h-64 overflow-hidden">
-              <img alt="content" class="object-cover object-center h-full w-full" src="https://dummyimage.com/1201x501">
-            </div>
-            <h2 class="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">type one of diagram</h2>
-            <p class="leading-relaxed text-base">Williamsburg occupy sustainable snackwave gochujang. Pinterest cornhole brunch, slow-carb neutra irony.</p>
-            <button class="flex mx-auto mt-6 text-white bg-indigo-500 border-0 py-2 px-5 focus:outline-none hover:bg-indigo-600 rounded">Download</button>
-          </div>
-          <div class="sm:w-1/2 mb-10 px-4">
-            <div class="rounded-lg h-64 overflow-hidden">
-              <img alt="content" class="object-cover object-center h-full w-full" src="https://dummyimage.com/1202x502">
-            </div>
-            <h2 class="title-font text-2xl font-medium text-gray-900 mt-6 mb-3">diagram type 2</h2>
-            <p class="leading-relaxed text-base">Williamsburg occupy sustainable snackwave gochujang. Pinterest cornhole brunch, slow-carb neutra irony.</p>
-            <button class="flex mx-auto mt-6 text-white bg-indigo-500 border-0 py-2 px-5 focus:outline-none hover:bg-indigo-600 rounded">Download</button>
-          </div>
-        </div>
+      <div class="flex flex-wrap sm:flex-row flex-col py-6 mb-12">
+        <h1 class="sm:w-2/5 text-gray-900 font-medium title-font text-2xl mb-2 sm:mb-0">Image Descriptors</h1>
+        <p class="sm:w-3/5 leading-relaxed text-base sm:pl-10 pl-0">
+          Visualization of image descriptors extracted from the selected image.
+        </p>
       </div>
     </div>
-  </section>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoadingDescriptors" class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
+      <p class="mt-4">Loading descriptors...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="text-red-500 text-center py-12">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Descriptor Visualization -->
+    <div *ngIf="descriptorImage" class="flex flex-wrap -mx-4 -mb-10 text-center">
+      <div class="w-full mb-10 px-4">
+        <div class="rounded-lg h-96 overflow-hidden">
+          <img [src]="descriptorImage" alt="Image Descriptors" class="object-contain object-center h-full w-full">
+        </div>
+        <button 
+          (click)="downloadDescriptors()" 
+          class="flex mx-auto mt-6 text-white bg-indigo-500 border-0 py-2 px-5 focus:outline-none hover:bg-indigo-600 rounded">
+          Download Descriptors
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

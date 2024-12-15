@@ -221,6 +221,7 @@ def get_descriptors():
         
         # Extract image path
         image_path = data.get('image_path')
+        print(image_path)
         if not image_path:
             return jsonify({"error": "No image path provided"}), 400
         
@@ -259,4 +260,4 @@ def get_descriptors():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)

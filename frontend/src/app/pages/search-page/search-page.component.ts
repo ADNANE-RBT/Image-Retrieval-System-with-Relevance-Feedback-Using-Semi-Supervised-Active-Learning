@@ -86,7 +86,7 @@ export class SearchPageComponent {
     formData.append('image', this.selectedFile);
     formData.append('top_k', '10');
   
-    this.http.post<SimpleSearchResult>('http://localhost:5000/simple_search', formData)
+    this.http.post<SimpleSearchResult>('http://localhost:5001/simple_search', formData)
       .subscribe({
         next: (response) => {
           console.log('API Response:', response); // Debugging purposes
@@ -116,7 +116,7 @@ export class SearchPageComponent {
     const formData = new FormData();
     formData.append('image', this.selectedFile);
     this.isLoading = true;
-    this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
+    this.http.post<SemiSupervisedSearchResult>('http://localhost:5001/semi_supervised_search', formData)
       .subscribe({
         next: (response) => {
           this.similarImages = response.similar_images.map(str => str.replace(/\\/g, "/").replace("../../Dataset/RSSCN7-master/",""));
@@ -162,7 +162,7 @@ export class SearchPageComponent {
   
     formData.append('feedback', JSON.stringify(feedback));
   
-    this.http.post<SemiSupervisedSearchResult>('http://localhost:5000/semi_supervised_search', formData)
+    this.http.post<SemiSupervisedSearchResult>('http://localhost:5001/semi_supervised_search', formData)
       .subscribe({
         next: (response) => {
           console.log('Refinement response:', response);
