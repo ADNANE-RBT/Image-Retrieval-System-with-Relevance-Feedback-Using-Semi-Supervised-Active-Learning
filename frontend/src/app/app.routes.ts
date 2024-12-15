@@ -36,7 +36,7 @@ export const routes: Routes = [
     path: 'edit',
     component: MainPageComponent,
     children: [
-      { path: '', component: EditPageComponent },
+      { path: 'image/:id', component: EditPageComponent },
     ],
   },
   {

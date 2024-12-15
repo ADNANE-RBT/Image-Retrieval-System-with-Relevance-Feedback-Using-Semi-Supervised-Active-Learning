@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ImageService, Image } from '../../services/image.service'; // Adjust import path as needed
+import { ImageService, Image } from '../../services/image.service'; 
 import { RouterModule } from '@angular/router';
 
 interface CheckboxGroup {
@@ -81,4 +81,34 @@ export class HomePageComponent implements OnInit {
     // Implement image view logic if needed
     console.log('Image clicked:', image);
   }
+  deleteImage(id: string) {
+    if (!confirm('Are you sure you want to delete this image?')) {
+      return;
+    }
+  
+    this.isLoading = true;
+    this.errorMessage = '';
+  
+    this.imageService.deleteImage(id).subscribe({
+      next: (response) => {
+        console.log(response.message); 
+        this.images = this.images.filter(image => image._id !== id); 
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = 'Failed to delete image';
+        this.isLoading = false;
+        console.error('Error deleting image:', error);
+      },
+    });
+  }
+  downloadImage(path: string, filename: string) {
+    const link = document.createElement('a');
+    link.href = path; 
+    link.download = filename; 
+    link.target = '_blank'; 
+    link.click();
+    link.remove(); 
+  }
+  
 }
